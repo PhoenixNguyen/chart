@@ -1,0 +1,207 @@
+$.ajax({
+			url : urlGet,
+			type : 'POST',
+			data : JSON.stringify({
+				"query" : {
+					"match_all" : {}
+				},
+				"facets" : {
+					"published" : {
+						"date_histogram" : {
+							"field" : "timestamp",
+							"interval" : time
+						}
+					}
+
+				}
+				,
+				"query": {
+				    "filtered":{
+				    "filter" : {
+				    	"and" : [{
+				                
+				                "range" : {
+					                "timestamp" : {
+					                    "from": fromDate.getTime(),
+					                    "to": toDate.getTime()
+					                }
+				            	}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"merchant" : merchant_permission
+										
+									}
+								}
+							},
+							{
+								"regexp" : {
+									"merchant" : ".*"+filter_merchant+".*"
+									
+								}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"paymentProvider" : filter_provider
+									}
+								}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"type" : filter_card_type
+									}
+								}
+							}
+							]
+							
+				        }
+				    }
+			     } 
+		        		        
+			}),
+			dataType : 'json',
+			processData : false,
+			success : function(json, statusText, xhr) {
+				//alert(json.facets.published.entries);
+				return draw(json.facets.published.entries);
+			},
+			error : function(xhr, message, error) {
+				console.error("Error while loading data from ElasticSearch",
+						message);
+				throw (error);
+			}
+		});
+
+
+		return $.ajax({
+			url : urlGet,
+			type : 'POST',
+			data : JSON.stringify({
+				"query" : {
+					"match_all" : {}
+				},
+				"facets" : {
+					"published" : {
+						"date_histogram" : {
+							"field" : "timestamp",
+							"interval" : time
+						}
+					}
+
+				},
+				"query": {
+				    "filtered":{
+				    "filter" : {
+				    	"and" : [{
+				                
+				                "range" : {
+					                "timestamp" : {
+					                    "from": fromDate.getTime(),
+					                    "to": toDate.getTime()
+					                }
+				            	}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"status" : status
+										
+									}
+								}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"merchant" : merchant_permission
+										
+									}
+								}
+							},
+							{
+								"regexp" : {
+									"merchant" : ".*"+filter_merchant+".*"
+									
+								}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"paymentProvider" : filter_provider
+									}
+								}
+							},
+							{
+								"query" : {
+									"terms" : {
+										"type" : filter_card_type
+									}
+								}
+							}
+							]
+							
+				        }
+				    }
+			     } 
+		        		        
+			})
+		});
+
+
+		//pie
+
+		{
+						"query" : {
+							"match_all" : {}
+						},
+
+						"facets" : {
+							"tags" : {
+								"terms" : {
+									"field" : field,
+									"size" : facet_size
+								}
+							}
+						},
+
+						"query" : {
+							"filtered" : {
+								"filter" : {
+									"and" : [
+											{
+												"query" : {
+													"terms" : {
+														"merchant" : merchant_permission
+
+													}
+												}
+											},
+											{
+												"regexp" : {
+													"merchant" : ".*"
+															+ filter_merchant
+															+ ".*"
+
+												}
+											},
+											{
+												"query" : {
+													"terms" : {
+														"paymentProvider" : filter_provider
+													}
+												}
+											},
+											{
+												"query" : {
+													"terms" : {
+														"type" : filter_card_type
+													}
+												}
+											} ]
+
+								}
+							}
+						}
+					}
