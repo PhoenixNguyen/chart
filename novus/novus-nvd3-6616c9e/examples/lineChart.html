@@ -57,24 +57,30 @@ var chart;
 
 nv.addGraph(function() {
   chart = nv.models.lineChart()
-  .options({
-    margin: {left: 100, bottom: 100},
-    x: function(d,i) { return i},
-    showXAxis: true,
-    showYAxis: true,
-    transitionDuration: 250
-  })
+  // .options({
+  //   margin: {left: 100, bottom: 100},
+  //   x: function(d,i) { return i},
+  //   showXAxis: true,
+  //   showYAxis: true,
+  //   transitionDuration: 250
+  // })
   ;
 
   // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
-  chart.xAxis
-    .axisLabel("Time (s)")
-    .tickFormat(d3.format(',.1f'));
+  // chart.xAxis
+  //   .axisLabel("Time (s)")
+  //   .tickFormat(d3.format(',.1f'));
 
-  chart.yAxis
-    .axisLabel('Voltage (v)')
-    .tickFormat(d3.format(',.2f'))
-    ;
+  // chart.yAxis
+  //   .axisLabel('Voltage (v)')
+  //   .tickFormat(d3.format(',.2f'))
+  //   ;
+
+  // chart.xAxis
+  //         .tickFormat(function(d) {
+  //           //alert(d);
+  //             return d;//d3.time.format('%d-%m-%y %H:%m:%s')(new Date(d))
+  //         });
 
   d3.select('#chart1 svg')
     .datum(sinAndCos())
@@ -96,8 +102,8 @@ function sinAndCos() {
     rand2 = []
     ;
 
-  for (var i = 0; i < 100; i++) {
-    sin.push({x: i *10, y: i % 10 == 5 ? null : Math.sin(i/10) }); //the nulls are to show how defined works
+  for (var i = 0; i < 2; i++) {
+    sin.push({x: i , y: i % 10 == 5 ? null : Math.sin(i/10) }); //the nulls are to show how defined works
     cos.push({x: i, y: .5 * Math.cos(i/10)});
     rand.push({x:i, y: Math.random() / 10});
     rand2.push({x: i, y: Math.cos(i/10) + Math.random() / 10 })
