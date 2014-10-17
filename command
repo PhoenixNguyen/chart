@@ -262,3 +262,102 @@ curl -X POST "http://localhost:9200/dashboard/_search?pretty=true" -d '
 '
 "value_script" : "t",
 * 2
+
+//////////////////////////////////// function group and sum
+curl -X POST "http://localhost:9200/dashboard/_search?pretty=true" -d '
+{
+    "query" : { "match_all" : {} },
+
+    "facets" : {
+        "published_on" : {
+            "date_histogram" : {
+                "field"    : "published",
+                "interval" : "day",
+                "t" : "20"
+            }
+        },
+        "wow_facet" : {
+            "filter" : {
+                "term" : { "t" : "20" }
+            }
+        }
+    }
+}
+'
+
+"function_score": {
+    "(query|filter)": {},
+    "boost": "boost for the whole query",
+    "functions": [
+        {
+            "filter": {},
+            "FUNCTION": {}
+        },
+        {
+            "FUNCTION": {}
+        }
+    ],
+    "max_boost": number,
+    "score_mode": "(multiply|max|...)",
+    "boost_mode": "(multiply|replace|...)"
+}
+
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+    "query" : { "match_all" : {} },
+    "aggs" : {
+        "max_price" : { "max" : { "field" : "amount" } }
+    }
+
+}
+'
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+    "query" : { "match_all" : {} },
+    "aggs" : {
+        "intraday_return" : { "sum" : { "field" : "amount" } }
+    }
+
+}
+'
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+  "aggs": {
+    "mo_group": {
+      "terms": {
+        "field": "msisdn"
+      },
+      "aggs": {
+        "mo_sum": {
+          "sum": {
+            "field": "amount"
+          }
+        }
+      }
+    }
+  }
+}
+'
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+  "aggs": {
+    "mo_group": {
+      
+    "terms": {
+        "field": "msisdn"
+      },
+      "aggs": {
+        "mo_sum": {
+          "sum": {
+            "field": "amount"
+          }
+        }
+      }
+    }
+  }
+}
+'

@@ -1,0 +1,37 @@
+var chart;
+		nv.addGraph(function() {
+			chart = nv.models.lineChart().options({
+				margin : {
+					left : 100,
+					bottom : 100
+				},
+				/* x : function(d, i) {
+					
+					return i;
+				},  */
+				showXAxis : true,
+				showYAxis : true,
+				transitionDuration : 250
+			});
+
+			chart.yAxis.axisLabel('Số lượng').tickFormat(d3.format(',.1f')); //,.2f //d
+
+			chart.xAxis
+			.rotateLabels(-20)
+			.tickFormat(function(d) {
+				return new Date(d).toString("dd/MM/yyyy HH:mm");
+			});
+			
+			d3.select('#line_chart svg').datum(generateLineCoordinates()).call(
+					chart);
+
+			//TODO: Figure out a good way to do this automatically
+			nv.utils.windowResize(chart.update);
+			//nv.utils.windowResize(function() { d3.select('#chart1 svg').call(chart) });
+
+			chart.dispatch.on('stateChange', function(e) {
+				nv.log('New State:', JSON.stringify(e));
+			});
+
+			return chart;
+		});
