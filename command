@@ -346,7 +346,7 @@ curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
 {
   "aggs": {
     "mo_group": {
-      
+           
     "terms": {
         "field": "msisdn"
       },
@@ -361,3 +361,74 @@ curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
   }
 }
 '
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+	"facets" : {
+        "tag" : {
+            "terms" : {
+                "field" : "msisdn"
+                
+            }
+        }
+    }  
+}
+'
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+"aggs": {
+	    "mo_group": {
+	           
+	    "terms": {
+	        "field": "msisdn"
+	      }
+	    }
+	  }    
+}
+'
+
+curl -X POST "http://localhost:9200/dashboard/_search?pretty=true" -d '
+{
+    "query" : { "match_all" : {} },
+
+    "facets" : {
+        "published_on" : {
+            "date_histogram" : {
+                "field"    : "published",
+                "interval" : "day",
+                "t" : "20"
+            }
+        }
+    }
+}
+'
+
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+	"query" : { "match_all" : {} },		
+	"facets" : {		
+        "stat1" : {
+            "statistical" : {
+                "fields" : ["amount"],
+                "script" : "doc['sum_of_squares'].value < 100"
+            }
+        }
+    }	
+}
+'
+curl -X POST "http://localhost:9200/mo-index/_search?pretty=true" -d '
+{
+	"query" : { "match_all" : {} },
+	"facets": {
+        "countryPopulation": {
+           "terms_stats": {
+              "key_field": "msisdn",
+              "value_field": "amount",
+              "size" : 20,
+              "script" : "doc['total'].value > 700000"
+           }
+        }
+     }	
+}
+'
+
